@@ -1,4 +1,4 @@
-package com.arleyfllh.population;
+package com.arleyfllh.population.utils;
 
 public class ApiResponse<T> {
 
@@ -10,9 +10,6 @@ public class ApiResponse<T> {
         this.success = success;
         this.message = message;
         this.data = data;
-    }
-
-    public ApiResponse() {
     }
 
     public boolean isSuccess() {

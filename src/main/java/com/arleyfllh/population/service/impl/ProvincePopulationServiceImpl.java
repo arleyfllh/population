@@ -1,11 +1,14 @@
 package com.arleyfllh.population.service.impl;
 
+import com.arleyfllh.population.exception.ResourceNotFoundException;
 import com.arleyfllh.population.model.ProvincePopulation;
 import com.arleyfllh.population.repository.ProvincePopulationRepository;
 import com.arleyfllh.population.service.ProvincePopulationService;
+import com.arleyfllh.population.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +26,25 @@ public class ProvincePopulationServiceImpl implements ProvincePopulationService 
     }
 
     @Override
-    public List<ProvincePopulation> findByProvince(String province) {
-        return provincePopulationRepository.findByProvinceContainingIgnoreCase(province);
+    public Page<ProvincePopulation> getAllByPagination(Pageable pageable) {
+        return provincePopulationRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<ProvincePopulation> search(String province, Long code, Pageable pageable) {
+        if (province != null && code != null) {
+            return provincePopulationRepository.findByProvinceContainingIgnoreCaseAndCode(province, code, pageable);
+        } else if (province != null) {
+            return provincePopulationRepository.findByProvinceContainingIgnoreCase(province, pageable);
+        } else if (code != null) {
+            return provincePopulationRepository.findByCode(code, pageable);
+        }
+        return provincePopulationRepository.findAll(pageable);
     }
 
     @Override
     public ProvincePopulation findById(Long id) {
-        return provincePopulationRepository.findById(id).orElseThrow(() -> new RuntimeException("Can't find province ID : " + id));
-    }
-
-    @Override
-    public List<ProvincePopulation> findByCode(Long code) {
-        return provincePopulationRepository.findByCode(code);
+        return provincePopulationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Province ID " + id + " not found"));
     }
 
     @Override
@@ -48,7 +58,7 @@ public class ProvincePopulationServiceImpl implements ProvincePopulationService 
     }
 
     @Override
-    public Page<ProvincePopulation> findByPagination(int page, int size) {
-        return provincePopulationRepository.findAll(PageRequest.of(page, size));
+    public ProvincePopulation create(ProvincePopulation request) {
+        return provincePopulationRepository.save(request);
     }
 }
