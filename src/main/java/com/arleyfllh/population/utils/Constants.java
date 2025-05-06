@@ -5,6 +5,8 @@ public interface Constants {
         String FETCHED_SUCCESS = "Data fetched successfully";
         String FETCHED_EMPTY = "Data is empty";
         String FETCHED_ERROR = "Error fetching data";
-        String CREATED = "Data saved";
+        String CREATED = "Data successfully created";
+        String DELETED = "Data successfully deleted";
+        String UPDATED = "Data successfully updated";
     }
 }

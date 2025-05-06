@@ -30,12 +30,10 @@ public class DataInitializer implements CommandLineRunner {
         JsonNode features = root.get("features");
         List<ProvincePopulation> dataList = new ArrayList<>();
 
-//        System.out.println(root.toString());
         for (JsonNode feature : features) {
             JsonNode props = feature.get("properties");
 
             ProvincePopulation data = new ProvincePopulation();
-            data.setId(props.get("ID").asLong());
             data.setCode(props.get("kode").asLong());
             data.setProvince(props.get("Propinsi").asText());
             data.setPopulation(props.get("Jumlah Penduduk").asLong());
