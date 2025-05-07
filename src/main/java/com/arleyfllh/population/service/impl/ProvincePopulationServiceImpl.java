@@ -5,6 +5,7 @@ import com.arleyfllh.population.model.ProvincePopulation;
 import com.arleyfllh.population.model.ProvincePopulationDto;
 import com.arleyfllh.population.repository.ProvincePopulationRepository;
 import com.arleyfllh.population.service.ProvincePopulationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProvincePopulationServiceImpl implements ProvincePopulationService {
 
     @Autowired

@@ -8,8 +8,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,35 +31,6 @@ public class ProvincePopulation {
     @Min(value = 1, message = "Population must more than 0")
     private Long population;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getCode() {
-        return code;
-    }
-
-    public void setCode(Long code) {
-        this.code = code;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public Long getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Long population) {
-        this.population = population;
-    }
 }
+
+
