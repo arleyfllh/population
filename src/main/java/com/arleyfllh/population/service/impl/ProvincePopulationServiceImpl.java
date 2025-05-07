@@ -1,11 +1,13 @@
 package com.arleyfllh.population.service.impl;
 
+import com.arleyfllh.population.exception.ResourceNotFoundException;
 import com.arleyfllh.population.model.ProvincePopulation;
+import com.arleyfllh.population.model.ProvincePopulationDto;
 import com.arleyfllh.population.repository.ProvincePopulationRepository;
 import com.arleyfllh.population.service.ProvincePopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,23 +25,32 @@ public class ProvincePopulationServiceImpl implements ProvincePopulationService 
     }
 
     @Override
-    public List<ProvincePopulation> findByProvince(String province) {
-        return provincePopulationRepository.findByProvinceContainingIgnoreCase(province);
+    public Page<ProvincePopulation> getAllByPagination(Pageable pageable) {
+        return provincePopulationRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<ProvincePopulation> search(String province, Long code, Pageable pageable) {
+        if (province != null && code != null) {
+            return provincePopulationRepository.findByProvinceContainingIgnoreCaseAndCode(province, code, pageable);
+        } else if (province != null) {
+            return provincePopulationRepository.findByProvinceContainingIgnoreCase(province, pageable);
+        } else if (code != null) {
+            return provincePopulationRepository.findByCode(code, pageable);
+        }
+        return provincePopulationRepository.findAll(pageable);
     }
 
     @Override
     public ProvincePopulation findById(Long id) {
-        return provincePopulationRepository.findById(id).orElseThrow(() -> new RuntimeException("Can't find province ID : " + id));
+        return provincePopulationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Province with ID " + id + " was not found"));
     }
 
     @Override
-    public List<ProvincePopulation> findByCode(Long code) {
-        return provincePopulationRepository.findByCode(code);
-    }
-
-    @Override
-    public List<ProvincePopulation> sortByPopulation() {
-        return provincePopulationRepository.findAll(Sort.by(Sort.Direction.DESC, "population"));
+    public List<ProvincePopulation> sortByPopulation(String sort) {
+        Sort.Direction direction = sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return provincePopulationRepository.findAll(Sort.by(direction, "population"));
     }
 
     @Override
@@ -48,7 +59,34 @@ public class ProvincePopulationServiceImpl implements ProvincePopulationService 
     }
 
     @Override
-    public Page<ProvincePopulation> findByPagination(int page, int size) {
-        return provincePopulationRepository.findAll(PageRequest.of(page, size));
+    public ProvincePopulation create(ProvincePopulation request) {
+        return provincePopulationRepository.save(request);
+    }
+
+    @Override
+    public void delete(Long id) throws ResourceNotFoundException {
+        if (!provincePopulationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Resource with ID " + id + " does not exist");
+        }
+
+        provincePopulationRepository.deleteById(id);
+    }
+
+    @Override
+    public ProvincePopulation update(Long id, ProvincePopulationDto dto) {
+        ProvincePopulation entity = provincePopulationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Data not found with ID " + id));
+
+        if (dto.getCode() != null) {
+            entity.setCode(dto.getCode());
+        }
+        if (dto.getProvince() != null) {
+            entity.setProvince(dto.getProvince());
+        }
+        if (dto.getPopulation() != null) {
+            entity.setPopulation(dto.getPopulation());
+        }
+
+        return provincePopulationRepository.save(entity);
     }
 }
